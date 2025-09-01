@@ -155,7 +155,8 @@ Otherwise return t on success, nil otherwise."
             (+popup--inhibit-transient t))
         (persp-delete-other-windows))
       (switch-to-buffer (doom-fallback-buffer))
-      (setf (persp-window-conf persp) (persp-window-state-get)))
+      (setf (persp-window-conf persp)
+            (funcall persp-window-state-get-function (selected-frame))))
     persp))
 
 ;;;###autoload
@@ -605,7 +606,7 @@ This be hooked to `projectile-after-switch-project-hook'."
           (funcall +workspaces-switch-project-function proot))))))
 
 ;;;###autoload
-(defun +workspaces-save-tab-bar-data-h (&rest _)
+(defun +workspaces-save-tab-bar-data-h (_)
   "Save the current workspace's tab bar data."
   (when (get-current-persp)
     (set-persp-parameter
@@ -621,7 +622,7 @@ This be hooked to `projectile-after-switch-project-hook'."
                          (frameset-filter-tabs (tab-bar-tabs) nil nil t))))
 
 ;;;###autoload
-(defun +workspaces-load-tab-bar-data-h (&rest _)
+(defun +workspaces-load-tab-bar-data-h (_)
   "Restores the tab bar data of the workspace we have just switched to."
   (tab-bar-tabs-set (persp-parameter 'tab-bar-tabs))
   (setq tab-bar-closed-tabs (persp-parameter 'tab-bar-closed-tabs))
