@@ -4,7 +4,6 @@
 ;;; Packages
 
 (use-package! treesit
-  :when (fboundp 'treesit-available-p)
   :when (treesit-available-p)
   :defer t
   :preface
@@ -48,8 +47,7 @@
     (let ((mode (funcall fn mode)))
       (if-let* ((ts (get mode '+tree-sitter))
                 (fallback-mode (car ts)))
-          (cond ((or (not (fboundp 'treesit-available-p))
-                     (not (treesit-available-p)))
+          (cond ((not (treesit-available-p))
                  (message "Treesit unavailable, falling back to `%S'" fallback-mode)
                  fallback-mode)
                 ((not (fboundp mode))
@@ -102,7 +100,7 @@
 
   :config
   ;; HACK: Keep $EMACSDIR clean by installing grammars to the active profile.
-  (add-to-list 'treesit-extra-load-path (concat doom-profile-data-dir "tree-sitter"))
+  (add-to-list 'treesit-extra-load-path (file-name-concat doom-profile-data-dir "tree-sitter"))
   (defadvice! +tree-sitter--install-grammar-to-local-dir-a (fn &rest args)
     "Write grammars to `doom-profile-data-dir'."
     :around #'treesit-install-language-grammar
